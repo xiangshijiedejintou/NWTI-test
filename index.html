@@ -37,7 +37,7 @@
       width: 100%;
       max-width: 960px;
       margin: 0 auto;
-      padding: 24px 16px 60px;
+      padding: 24px 16px 24px;
     }
 
     .hero,
@@ -59,10 +59,16 @@
     .hero-tag {
       display: inline-block;
       padding: 6px 12px;
-      border-radius: 999px;
-      background: var(--primary-light);
-      color: var(--primary-dark);
-      font-size: 13px;
+      border-radius: 13px;
+      margin-bottom: 14px;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: 36px;
+      line-height: 1.2;
+      letter-spacing: 1px;
+   px;
       margin-bottom: 14px;
     }
 
@@ -272,7 +278,7 @@
 
     .result-card {
       margin-top: 20px;
-      padding: 34px 26px 30px;
+      padding: 30px 24px 20px;
     }
 
     .result-tag {
@@ -411,18 +417,18 @@
     }
 
     .footer-note {
-      margin-top: 18px;
+      margin-top: 12px;
       text-align: center;
       color: var(--subtext);
       font-size: 13px;
-      line-height: 1.8;
+      line-height: 1.7;
     }
 
     .site-footer {
       text-align: center;
       color: var(--subtext);
       font-size: 13px;
-      padding: 18px 0 30px;
+      padding: 8px 0 12px;
     }
 
     .all-results-card {
@@ -920,7 +926,6 @@
     }
 
     function scoreToPercent(score) {
-      // 分数范围 8~40 映射到 0~100
       return ((score - 8) / 32) * 100;
     }
 
