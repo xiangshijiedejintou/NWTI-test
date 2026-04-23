@@ -59,16 +59,10 @@
     .hero-tag {
       display: inline-block;
       padding: 6px 12px;
-      border-radius: 13px;
-      margin-bottom: 14px;
-    }
-
-    .hero h1 {
-      margin: 0;
-      font-size: 36px;
-      line-height: 1.2;
-      letter-spacing: 1px;
-   px;
+      border-radius: 999px;
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      font-size: 13px;
       margin-bottom: 14px;
     }
 
@@ -89,14 +83,18 @@
 
     .start-wrap {
       margin-top: 24px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
     }
 
     .start-btn,
     .submit-btn,
     .restart-btn,
-    .share-btn,
     .view-all-btn,
-    .back-btn {
+    .back-btn,
+    .all-in-btn {
       border: none;
       border-radius: 999px;
       padding: 14px 22px;
@@ -119,19 +117,20 @@
       transform: translateY(-1px);
     }
 
-    .share-btn,
     .view-all-btn,
     .back-btn,
-    .ghost-btn {
+    .ghost-btn,
+    .all-in-btn {
       background: var(--primary-light);
       color: var(--primary-dark);
     }
 
-    .share-btn:hover,
     .view-all-btn:hover,
     .back-btn:hover,
-    .ghost-btn:hover {
+    .ghost-btn:hover,
+    .all-in-btn:hover {
       background: #d1e9fa;
+      transform: translateY(-1px);
     }
 
     .tips {
@@ -551,7 +550,8 @@
         flex-direction: column;
       }
 
-      .result-actions button {
+      .result-actions button,
+      .start-wrap button {
         width: 100%;
       }
     }
@@ -570,6 +570,7 @@
 
       <div class="start-wrap">
         <button class="start-btn" onclick="startTest()">开始测试</button>
+        <button class="all-in-btn" onclick="allInResult()">我直接All in</button>
       </div>
 
       <div class="tips">
@@ -675,7 +676,6 @@
 
       <div class="result-actions">
         <button class="restart-btn" onclick="restartTest()">重新测试</button>
-        <button class="share-btn" onclick="shareResult()">分享结果</button>
         <button class="view-all-btn" onclick="showAllResults()">查看全部结果</button>
       </div>
 
@@ -856,6 +856,39 @@
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
+    function allInResult() {
+      currentResultKey = "外扬破格独行自择";
+      currentResultData = resultsMap[currentResultKey];
+      currentDimensionScores = {
+        EI: 40,
+        SP: 8,
+        TC: 40,
+        FD: 40
+      };
+
+      hideAllSections();
+      document.getElementById("result").classList.remove("hidden");
+      document.getElementById("resultTitle").textContent = currentResultData.title;
+      document.getElementById("resultCode").textContent = currentResultData.code;
+      document.getElementById("resultDesc").textContent = currentResultData.desc;
+
+      const img = document.getElementById("resultImage");
+      img.src = currentResultData.image;
+      img.alt = currentResultData.title;
+      img.onerror = function () {
+        this.src = "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(`
+          <svg xmlns="http://www.w3.org/2000/svg" width="800" height="1000">
+            <rect width="100%" height="100%" fill="#eaf4fb"/>
+            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
+              fill="#6aaee0" font-size="36" font-family="Arial, sans-serif">图片未找到</text>
+          </svg>
+        `);
+      };
+
+      renderTraitCharts(currentDimensionScores);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
     function hideAllSections() {
       document.getElementById("home").classList.add("hidden");
       document.getElementById("test").classList.add("hidden");
@@ -1015,27 +1048,6 @@
       hideAllSections();
       document.getElementById("home").classList.remove("hidden");
       window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-
-    function shareResult() {
-      if (!currentResultData) return;
-
-      const shareText = `我测出的 NWTI 结果是：${currentResultData.title}（${currentResultData.code}）`;
-      const shareUrl = window.location.href;
-
-      if (navigator.share) {
-        navigator.share({
-          title: "测测你的NWTI",
-          text: shareText,
-          url: shareUrl
-        }).catch(() => {});
-      } else {
-        navigator.clipboard.writeText(`${shareText}\n${shareUrl}`).then(() => {
-          alert("结果文案和链接已复制，你可以直接粘贴分享给朋友啦。");
-        }).catch(() => {
-          alert("当前浏览器不支持一键分享，请手动复制页面链接。");
-        });
-      }
     }
 
     function showAllResults() {
