@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NWTI 人格测试</title>
+  <style>
+    :root {
+      --bg: #f6f3ee;
+      --card: #ffffff;
+      --text: #2d2a26;
+      --subtext: #7b746b;
+      --primary: #b18457;
+      --primary-dark: #8f6841;
+      --line: #e8dfd4;
+      --option-bg: #fbf8f4;
+      --option-hover: #f3ebe2;
+      --selected: #e8d7c3;
+      --shadow: 0 10px 30px rgba(0,0,0,0.06);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: linear-gradient(180deg, #f8f5f0 0%, #f4efe8 100%);
+      color: var(--text);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 24px 16px 60px;
+    }
+
+    .hero,
+    .card,
+    .result-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      padding: 40px 28px;
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .hero-tag {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: #f3ece4;
+      color: var(--primary-dark);
+      font-size: 13px;
+      margin-bottom: 14px;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: 34px;
+      line-height: 1.2;
+      letter-spacing: 1px;
+    }
+
+    .hero p {
+      margin: 14px auto 0;
+      max-width: 620px;
+      color: var(--subtext);
+      line-height: 1.8;
+      font-size: 15px;
+    }
+
+    .start-btn,
+    .submit-btn,
+    .restart-btn {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      padding: 14px 28px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .start-btn:hover,
+    .submit-btn:hover,
+    .restart-btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    .start-wrap {
+      margin-top: 24px;
+    }
+
+    .tips {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-top: 26px;
+      text-align: left;
+    }
+
+    .tip {
+      background: #fcfaf7;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px;
+    }
+
+    .tip-title {
+      font-weight: 700;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    .tip-text {
+      color: var(--subtext);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .card {
+      margin-top: 20px;
+      padding: 24px;
+    }
+
+    .progress-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .progress-text {
+      font-size: 14px;
+      color: var(--subtext);
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 10px;
+      background: #f0e7dc;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .progress-inner {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #d4b08a, #b18457);
+      border-radius: 999px;
+      transition: width 0.25s ease;
+    }
+
+    .question-index {
+      color: var(--primary-dark);
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .question-title {
+      font-size: 24px;
+      line-height: 1.6;
+      margin: 0 0 22px;
+      font-weight: 700;
+    }
+
+    .options {
+      display: grid;
+      gap: 12px;
+    }
+
+    .option {
+      border: 1px solid var(--line);
+      background: var(--option-bg);
+      border-radius: 14px;
+      padding: 16px 18px;
+      cursor: pointer;
+      transition: 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .option:hover {
+      background: var(--option-hover);
+      border-color: #dcc8b2;
+    }
+
+    .option.selected {
+      background: var(--selected);
+      border-color: #c5a17b;
+    }
+
+    .option-score {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: #fff;
+      border: 1px solid #d8c5af;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary-dark);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .option-label {
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .nav button {
+      border: none;
+      border-radius: 999px;
+      padding: 12px 22px;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    .ghost-btn {
+      background: #efe6db;
+      color: #6d5743;
+    }
+
+    .ghost-btn:hover {
+      background: #e7dacb;
+    }
+
+    .submit-btn[disabled] {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .result-card {
+      margin-top: 20px;
+      padding: 32px 24px 28px;
+    }
+
+    .result-tag {
+      display: inline-block;
+      font-size: 13px;
+      background: #f2ebe2;
+      color: var(--primary-dark);
+      padding: 6px 12px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+    }
+
+    .result-title {
+      font-size: 32px;
+      font-weight: 800;
+      margin: 0;
+      line-height: 1.35;
+    }
+
+    .result-code {
+      margin-top: 12px;
+      font-size: 16px;
+      color: var(--primary-dark);
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .result-desc {
+      margin-top: 20px;
+      color: #4b443d;
+      line-height: 2;
+      font-size: 16px;
+      white-space: pre-wrap;
+    }
+
+    .scores {
+      margin-top: 28px;
+      padding-top: 22px;
+      border-top: 1px solid var(--line);
+      display: grid;
+      gap: 16px;
+    }
+
+    .score-item {
+      background: #fcfaf7;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px 16px;
+    }
+
+    .score-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 14px;
+      margin-bottom: 8px;
+      color: #5e544a;
+      font-weight: 700;
+    }
+
+    .score-bar {
+      height: 10px;
+      background: #efe5d8;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .score-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #d4b08a, #b18457);
+      border-radius: 999px;
+    }
+
+    .score-note {
+      margin-top: 8px;
+      font-size: 13px;
+      color: var(--subtext);
+      line-height: 1.6;
+    }
+
+    .restart-wrap {
+      margin-top: 26px;
+      text-align: center;
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      text-align: center;
+      color: var(--subtext);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    @media (max-width: 768px) {
+      .hero h1,
+      .result-title {
+        font-size: 26px;
+      }
+
+      .question-title {
+        font-size: 20px;
+      }
+
+      .tips {
+        grid-template-columns: 1fr;
+      }
+
+      .card,
+      .result-card,
+      .hero {
+        padding: 20px 16px;
+      }
+
+      .option {
+        padding: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- 首页 -->
+    <section id="home" class="hero">
+      <div class="hero-tag">NWTI 人格测试</div>
+      <h1>你会成为哪一种结果人物？</h1>
+      <p>
+        这是一套基于四个维度构建的人格倾向测试。
+        你将完成 32 道题目，系统会根据你的作答结果，
+        生成属于你的 NWTI 人格类型与人物介绍。
+      </p>
+
+      <div class="start-wrap">
+        <button class="start-btn" onclick="startTest()">开始测试</button>
+      </div>
+
+      <div class="tips">
+        <div class="tip">
+          <div class="tip-title">作答建议</div>
+          <div class="tip-text">
+            请根据你平时更真实、稳定的状态作答，而不是某一个特殊情境下的表现。
+          </div>
+        </div>
+        <div class="tip">
+          <div class="tip-title">选项形式</div>
+          <div class="tip-text">
+            每道题都采用 5 级量表：完全不像我 / 不太像我 / 一般 / 比较像我 / 非常像我。
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 测试页 -->
+    <section id="test" class="card hidden">
+      <div class="progress-top">
+        <div class="progress-text" id="progressText">第 1 题 / 共 32 题</div>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-inner" id="progressBar"></div>
+      </div>
+
+      <div class="question-index" id="questionIndex">NWTI QUESTION 01</div>
+      <h2 class="question-title" id="questionTitle"></h2>
+
+      <div class="options" id="optionsWrap"></div>
+
+      <div class="nav">
+        <button class="ghost-btn" onclick="prevQuestion()">上一题</button>
+        <button class="submit-btn" id="nextBtn" onclick="nextQuestion()">下一题</button>
+      </div>
+    </section>
+
+    <!-- 结果页 -->
+    <section id="result" class="result-card hidden">
+      <div class="result-tag">你的测试结果</div>
+      <h2 class="result-title" id="resultTitle"></h2>
+      <div class="result-code" id="resultCode"></div>
+      <div class="result-desc" id="resultDesc"></div>
+
+      <div class="scores" id="scoresWrap"></div>
+
+      <div class="restart-wrap">
+        <button class="restart-btn" onclick="restartTest()">重新测试</button>
+      </div>
+
+      <div class="footer-note">
+        本测试结果用于人格倾向表达与内容展示，不作为专业心理诊断依据。
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const optionLabels = [
+      "完全不像我",
+      "不太像我",
+      "一般",
+      "比较像我",
+      "非常像我"
+    ];
+
+    const questions = [
+      { id: 1, text: "我通常会比较自然地把自己的情绪和态度表现出来。", dimension: "EI", reverse: false },
+      { id: 2, text: "在陌生环境中，我更习惯先观察，而不是马上融入。", dimension: "EI", reverse: true },
+      { id: 3, text: "如果我对某件事很有想法，我通常愿意主动表达。", dimension: "EI", reverse: false },
+      { id: 4, text: "即使心里有很多感受，我也不太会立刻表现出来。", dimension: "EI", reverse: true },
+      { id: 5, text: "在人群中，我往往会让人较快注意到我的存在感。", dimension: "EI", reverse: false },
+      { id: 6, text: "比起被看见，我更习惯把锋芒和情绪收在心里。", dimension: "EI", reverse: true },
+      { id: 7, text: "我倾向于通过语言、表情或行动直接传达自己的好恶。", dimension: "EI", reverse: false },
+      { id: 8, text: "别人常常需要相处一段时间，才会真正了解我。", dimension: "EI", reverse: true },
+
+      { id: 9, text: "面对规则时，我通常会先选择理解并遵守它。", dimension: "SP", reverse: false },
+      { id: 10, text: "如果一种做法早已成为惯例，我会本能地想挑战它是否必须如此。", dimension: "SP", reverse: true },
+      { id: 11, text: "我做事时更安心于有清晰边界和明确标准。", dimension: "SP", reverse: false },
+      { id: 12, text: "只要我认为结果更好，打破常规也没有关系。", dimension: "SP", reverse: true },
+      { id: 13, text: "我认可秩序和约束本身具有价值。", dimension: "SP", reverse: false },
+      { id: 14, text: "我不喜欢被既定框架限制，更愿意按自己的方式行动。", dimension: "SP", reverse: true },
+      { id: 15, text: "在不确定的情况下，我通常会优先参考已有经验和成熟方法。", dimension: "SP", reverse: false },
+      { id: 16, text: "遇到旧规则妨碍效率时，我往往更想重新定义规则。", dimension: "SP", reverse: true },
+
+      { id: 17, text: "重要的事情，我更愿意靠自己独立完成。", dimension: "TC", reverse: false },
+      { id: 18, text: "遇到问题时，我倾向于较早找人讨论，而不是自己先消化。", dimension: "TC", reverse: true },
+      { id: 19, text: "我需要足够的独处空间，才能维持稳定的状态。", dimension: "TC", reverse: false },
+      { id: 20, text: "和别人一起推进事情，通常会让我更有动力。", dimension: "TC", reverse: true },
+      { id: 21, text: "比起共同协作，我更信任自己独自掌控节奏。", dimension: "TC", reverse: false },
+      { id: 22, text: "我常常在互动和合作中，才更容易激发想法。", dimension: "TC", reverse: true },
+      { id: 23, text: "即使没有同行者，我也能比较坚定地往前走。", dimension: "TC", reverse: false },
+      { id: 24, text: "我会从“有人一起走”这件事本身获得力量。", dimension: "TC", reverse: true },
+
+      { id: 25, text: "我相信人生的走向，主要取决于自己的选择。", dimension: "FD", reverse: false },
+      { id: 26, text: "很多关键转折的发生，更像是命运在适当时候推了我一把。", dimension: "FD", reverse: true },
+      { id: 27, text: "如果结果不理想，我通常会先想自己还可以怎样改变它。", dimension: "FD", reverse: false },
+      { id: 28, text: "我相信有些事情是否发生，更多取决于时机和际遇。", dimension: "FD", reverse: true },
+      { id: 29, text: "我倾向于认为，人可以主动塑造自己的人生轨迹。", dimension: "FD", reverse: false },
+      { id: 30, text: "面对重大变化时，我常觉得自己是在顺着某种安排往前走。", dimension: "FD", reverse: true },
+      { id: 31, text: "在低谷时，我更相信新的选择能带来新的方向。", dimension: "FD", reverse: false },
+      { id: 32, text: "即使努力很重要，我仍相信很多事终究有其命数。", dimension: "FD", reverse: true }
+    ];
+
+    const resultsMap = {
+      "外扬循矩独行自择": {
+        title: "姜峰｜忧郁的美食家",
+        desc: "TA是人狠话不多的姜峰型人格，态度鲜明，审美清晰。对待生活、关系与自我，TA有一套相对稳定的标准，为了达成这个标准 TA会在不逾矩的范围内释放恰当的冲动。TA不喜欢把决定权交给别人，在 TA心中，人最终还是要活成自己认可的样子，而不是别人觉得合适的样子。真正有品味有自我的成熟刑警，敢于边走边吃煎饼果子，敢于一顿吃六十个生蚝。"
+      },
+      "外扬循矩独行天命": {
+        title: "彭骁｜雨夜最后一匹狼",
+        desc: "TA是夜行的彭骁型人格，习惯自己面对问题、自己抗住压力、自己穿过那些别人未必看得见的长夜。经历过许多的 TA看待事物更深，不轻易许诺，也不会轻易被表面的热情打动。TA理解局势，理解时间，理解有些事只能等它自己走到面前，并非所有答案都能强求得来。TA站在夜里很久，却比任何人都清楚自己身处何方，要往何处。"
+      },
+      "外扬循矩共行自择": {
+        title: "强尼｜胜券代言人",
+        desc: "TA很擅长把控场面，也知道如何让自己被人听见，被人相信。很多时候 TA不仅是在表达自己，也会把信念传递给周围的人。TA对秩序有自己的理解，富有感染力，懂得调动资源和整合力量，把事情朝自己希望的方向推进。TA对未来有明确的掌控感，也相信结果不是等待而来的。比起说服别人顺从自己，TA更希望被众人理解，与大家共同成长。"
+      },
+      "外扬循矩共行天命": {
+        title: "牙刷｜钻石牌钻石型钻石牙刷",
+        desc: "TA是个性可爱的小牙刷。TA的身上有种鲜明的存在感，也乐于在关系和互动中释放魅力。TA很懂得顺着环境的节奏前进，知道什么时候该发光，什么时候该借势，什么时候该把自己放进一个更大的故事里。TA适合处在人与人的联结之中，因互动而更加生动，也会因回应而更有能量。明亮的流动的欢快的小牙刷，一直游到被命运偏爱中得五百万的那一天。"
+      },
+      "外扬破格独行自择": {
+        title: "徐云峰｜力挽狂澜哥",
+        desc: "你好，你是徐云峰。徐云峰们不太相信事情只能照既定轨迹发展，徐云峰总有办法。比起按部就班地解决问题，TA更擅长在变化里寻找突破。TA相信自己本能的决断，不愿把关键决定交给环境，有时表面上稍显冷血残忍，但总有一天人们会理解 TA的心情。时代的车轮滚滚转动，我们迎着失控去掌控。"
+      },
+      "外扬破格独行天命": {
+        title: "贾金龙｜玫瑰花园的罂粟",
+        desc: "玫瑰花丛中一根罂粟，美丽花园里不合时宜的一株植物。TA极具吸引力又不太安全，懂得展现自己，很容易在人群中制造记忆点。对于 TA来说，边界只是参考不是限制。TA宁可独自承受代价，也不愿轻易把自己修剪成别人期待的模样。骄傲如 TA，却也偶尔相信，有些相遇与别离，失控和沉沦，索取与牺牲，也是生命的一部分。"
+      },
+      "外扬破格共行自择": {
+        title: "萧雨山｜野蔷薇",
+        desc: "TA不是温顺圆滑容易被安排的人，带着一种向外生长的力量，无论走到哪里都会把自己的气息带进环境里。TA不迷信旧秩序，不喜欢太刻板，很少考虑该不该，更多考虑想不想值不值。TA像野花没有标准模板，生来只为盛放，为了抵达目标，TA承受动荡，推动命运，也会带动周围的人一起躁动、一起向前。"
+      },
+      "外扬破格共行天命": {
+        title: "林智达｜万皇第一扒",
+        desc: "TA是人群中的老油条，很会按时机出现，很会制造话题，很会把人群卷进自己的节奏里。TA不太接受平庸与按部就班，但相对那些明目张胆的捣蛋者，他又严守着自己内心的某一条底线。即便骄纵如斯，TA却从未抵抗命运，只是顺着命运的水流，被推到哪里，就走到哪里。"
+      },
+      "内秀循矩独行自择": {
+        title: "潘大海｜二大队一把手",
+        desc: "TA是不动声色的主心骨，未必是最先发言的人，也很少用声势建立存在感。但只要局面需要人稳住节奏，众人的目光就会落到 TA身上。TA不习惯把一切摊开讲，不习惯用情绪推动事情发展，在意规则和分寸，注重结果。TA总是自己扛事儿，不太迷信运气，不愿意把成败交给偶然。真正重要的事情，需要有人独自负责到底。"
+      },
+      "内秀循矩独行天命": {
+        title: "汤德远｜孤独的根号九",
+        desc: "TA不爱喧哗，习惯把判断藏在沉默里，天然与热闹保持一点距离。TA尊重秩序和那些能够维持世界稳定运转的东西。也许 TA并不总是和世界较劲，多数时候TA懂得接受那些不能靠意志改写的东西，于是学会收回执念，专注于还能握紧的东西。TA藏在孤独的根号下，安静又克制，相信宿命和现实的安排。有一天TA发现自己是完全平方数，在命运的审判下，原来还有更多可能，原来还有更多同路人，与你同在。"
+      },
+      "内秀循矩共行自择": {
+        title: "王宪平｜东北之冬",
+        desc: "东北的冬，初见时总弥漫着寒冷肃杀。TA讲原则，有尺度，时而硬如钢板，时而倔强如驴，挪又挪不动，踹一脚还疼。但拨开表面的冷冽，是滚烫的热炕，扎实的深情。TA相信很多事要靠人去成全，在日复一日的相处中，撑住想要的生活。在 TA的怀里，有一片独属于自己的，静悄悄白茫茫的田。"
+      },
+      "内秀循矩共行天命": {
+        title: "周宴临｜运河人家主理人",
+        desc: "温和稳妥的周大厨，细心烹饪着人生哲学。TA并非锋利强势的人，却经常能站在人群中间拉紧许多关系。对于感情与态度，TA喜欢恰到好处的火候，不在意掌控，在意长期稳定，彼此舒服的状态。顺着环境、时机和人情的水流，一边接受，一边调整，一边把握着生活的温度。很多事情有它自己的来处和去处，太用力未必最好，等待也是一种选择。"
+      },
+      "内秀破格独行自择": {
+        title: "魏迎秋｜爱情的牙齿",
+        desc: "关于爱和恨，魏迎秋不太明白，但大部分人告诉他爱要诚实，爱是责任，他便一贯如此去做。偏偏是这样的一个人，对待感情的浓度超乎人的想象。TA并非浪漫主义者，偶尔产生的不安全感敦促 TA要更加虔诚去付出，不愿接受虚假。但也许痛感比语言更诚实，缺口比誓言更可靠，相比于让一切经过，TA更想永远留下一些痕迹。"
+      },
+      "内秀破格独行天命": {
+        title: "刘锋｜悬刃",
+        desc: "TA始终与外界隔着一段距离，不轻易展现情绪。有时并非享受独处，而是习惯了独来独往。TA看起来很“简洁”，身上没有复杂交织的情感，只是根据本能去做事。有的人塑造秩序，有的人享受秩序带来的稳定，而 TA更容易看见秩序背后的裂缝，因而很少把自己交给规则和承诺，也不相信有什么真正坚如磐石永远不朽。像一把悬刃等待命运的时机成熟就落下，在此之前，时刻保持锋利。"
+      },
+      "内秀破格共行天命": {
+        title: "钱才｜没有密码的 Asia卡",
+        desc: "淡淡的钱才，淡淡的走过窗前，淡淡的接受郁金香开，郁金香败。TA外表不张扬，待人接物保持分寸，但可以很好相处。TA有时会被命运推着走一段路，但内心并非真正冷酷。TA懂得识局与周旋，在不可控的现实里尽量保住自己的一部分，不幻想能够改变命运的走向，但会在早已知晓的结局到来之前，给自己写下丰满的过程。"
+      },
+      "内秀破格共行自择": {
+        title: "杨松柏｜冬柏",
+        desc: "冬日里的松柏依旧长青，霜雪之下的枝条依旧柔韧。大部分时间 TA很有原则，但偶尔也会做出乎人意料的事情。TA的内心有些自我，不轻易示弱，责任心很强，但有时会不知道用什么方式来表达爱。TA知道世界并不总是温柔，也明白很多事情不能只靠理想解决。风霜选择了 TA，TA决定一直站在这里。除去冰壳，窥见一颗柔软的心。"
+      }
+    };
+
+    let currentIndex = 0;
+    let answers = new Array(questions.length).fill(null);
+
+    function startTest() {
+      document.getElementById("home").classList.add("hidden");
+      document.getElementById("result").classList.add("hidden");
+      document.getElementById("test").classList.remove("hidden");
+      currentIndex = 0;
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      const q = questions[currentIndex];
+      document.getElementById("progressText").textContent = `第 ${currentIndex + 1} 题 / 共 ${questions.length} 题`;
+      document.getElementById("questionIndex").textContent = `NWTI QUESTION ${String(currentIndex + 1).padStart(2, "0")}`;
+      document.getElementById("questionTitle").textContent = q.text;
+      document.getElementById("progressBar").style.width = `${((currentIndex + 1) / questions.length) * 100}%`;
+
+      const optionsWrap = document.getElementById("optionsWrap");
+      optionsWrap.innerHTML = "";
+
+      optionLabels.forEach((label, idx) => {
+        const score = idx + 1;
+        const div = document.createElement("div");
+        div.className = "option" + (answers[currentIndex] === score ? " selected" : "");
+        div.onclick = () => selectOption(score);
+
+        div.innerHTML = `
+          <div class="option-score">${score}</div>
+          <div class="option-label">${label}</div>
+        `;
+        optionsWrap.appendChild(div);
+      });
+
+      const nextBtn = document.getElementById("nextBtn");
+      if (currentIndex === questions.length - 1) {
+        nextBtn.textContent = "查看结果";
+      } else {
+        nextBtn.textContent = "下一题";
+      }
+    }
+
+    function selectOption(score) {
+      answers[currentIndex] = score;
+      renderQuestion();
+    }
+
+    function prevQuestion() {
+      if (currentIndex > 0) {
+        currentIndex--;
+        renderQuestion();
+      }
+    }
+
+    function nextQuestion() {
+      if (answers[currentIndex] === null) {
+        alert("请先选择一个答案再继续。");
+        return;
+      }
+
+      if (currentIndex < questions.length - 1) {
+        currentIndex++;
+        renderQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    function getScoredValue(raw, reverse) {
+      return reverse ? 6 - raw : raw;
+    }
+
+    function judgeDimension(score, first, second) {
+      if (score >= 30) return first;
+      if (score <= 18) return second;
+      return score >= 24 ? first : second;
+    }
+
+    function getDimensionTrend(score, first, second) {
+      if (score >= 35) return `强烈偏向${first}`;
+      if (score >= 30) return `明显偏向${first}`;
+      if (score >= 25) return `轻微偏向${first}`;
+      if (score >= 19) return `比较均衡`;
+      if (score >= 14) return `明显偏向${second}`;
+      return `强烈偏向${second}`;
+    }
+
+    function showResult() {
+      const dimensionScores = {
+        EI: 0,
+        SP: 0,
+        TC: 0,
+        FD: 0
+      };
+
+      questions.forEach((q, i) => {
+        const raw = answers[i];
+        const finalScore = getScoredValue(raw, q.reverse);
+        dimensionScores[q.dimension] += finalScore;
+      });
+
+      const eiText = judgeDimension(dimensionScores.EI, "外扬", "内秀");
+      const spText = judgeDimension(dimensionScores.SP, "循矩", "破格");
+      const tcText = judgeDimension(dimensionScores.TC, "独行", "共行");
+      const fdText = judgeDimension(dimensionScores.FD, "自择", "天命");
+
+      const resultKey = `${eiText}${spText}${tcText}${fdText}`;
+      const resultData = resultsMap[resultKey] || {
+        title: "NWTI 测试结果",
+        desc: "你的人格倾向介于多个维度之间，呈现出较强的复合特征。"
+      };
+
+      document.getElementById("test").classList.add("hidden");
+      document.getElementById("result").classList.remove("hidden");
+
+      document.getElementById("resultTitle").textContent = resultData.title;
+      document.getElementById("resultCode").textContent = resultKey;
+      document.getElementById("resultDesc").textContent = resultData.desc;
+
+      const scoresWrap = document.getElementById("scoresWrap");
+      scoresWrap.innerHTML = "";
+
+      const scoreData = [
+        {
+          label: "外扬 / 内秀",
+          score: dimensionScores.EI,
+          note: getDimensionTrend(dimensionScores.EI, "外扬", "内秀")
+        },
+        {
+          label: "循矩 / 破格",
+          score: dimensionScores.SP,
+          note: getDimensionTrend(dimensionScores.SP, "循矩", "破格")
+        },
+        {
+          label: "独行 / 共行",
+          score: dimensionScores.TC,
+          note: getDimensionTrend(dimensionScores.TC, "独行", "共行")
+        },
+        {
+          label: "自择 / 天命",
+          score: dimensionScores.FD,
+          note: getDimensionTrend(dimensionScores.FD, "自择", "天命")
+        }
+      ];
+
+      scoreData.forEach(item => {
+        const box = document.createElement("div");
+        box.className = "score-item";
+        box.innerHTML = `
+          <div class="score-head">
+            <span>${item.label}</span>
+            <span>${item.score} / 40</span>
+          </div>
+          <div class="score-bar">
+            <div class="score-fill" style="width:${(item.score / 40) * 100}%"></div>
+          </div>
+          <div class="score-note">${item.note}</div>
+        `;
+        scoresWrap.appendChild(box);
+      });
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function restartTest() {
+      currentIndex = 0;
+      answers = new Array(questions.length).fill(null);
+      document.getElementById("result").classList.add("hidden");
+      document.getElementById("home").classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  </script>
+</body>
+</html>
