@@ -570,7 +570,7 @@
 
       <div class="start-wrap">
         <button class="start-btn" onclick="startTest()">开始测试</button>
-        <button class="all-in-btn" onclick="allInResult()">我直接All in</button>
+        <button class="all-in-btn" onclick="showAllResults()">我直接All in</button>
       </div>
 
       <div class="tips">
@@ -853,39 +853,6 @@
       document.getElementById("test").classList.remove("hidden");
       currentIndex = 0;
       renderQuestion();
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-
-    function allInResult() {
-      currentResultKey = "外扬破格独行自择";
-      currentResultData = resultsMap[currentResultKey];
-      currentDimensionScores = {
-        EI: 40,
-        SP: 8,
-        TC: 40,
-        FD: 40
-      };
-
-      hideAllSections();
-      document.getElementById("result").classList.remove("hidden");
-      document.getElementById("resultTitle").textContent = currentResultData.title;
-      document.getElementById("resultCode").textContent = currentResultData.code;
-      document.getElementById("resultDesc").textContent = currentResultData.desc;
-
-      const img = document.getElementById("resultImage");
-      img.src = currentResultData.image;
-      img.alt = currentResultData.title;
-      img.onerror = function () {
-        this.src = "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(`
-          <svg xmlns="http://www.w3.org/2000/svg" width="800" height="1000">
-            <rect width="100%" height="100%" fill="#eaf4fb"/>
-            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
-              fill="#6aaee0" font-size="36" font-family="Arial, sans-serif">图片未找到</text>
-          </svg>
-        `);
-      };
-
-      renderTraitCharts(currentDimensionScores);
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
